@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MessageService } from '../shared/data-access/message.service';
+import { MessageInputComponent } from './ui/message-input.component';
 import { MessageListComponent } from './ui/message-list.component';
 
 @Component({
@@ -8,9 +9,12 @@ import { MessageListComponent } from './ui/message-list.component';
   template: `
     <div class="container">
       <ss-message-list [messages]="messageService.messages()"></ss-message-list>
+      <ss-message-input
+        (send)="messageService.add$.next($event)"
+      ></ss-message-input>
     </div>
   `,
-  imports: [MessageListComponent],
+  imports: [MessageListComponent, MessageInputComponent],
 })
 export default class HomeComponent {
   messageService = inject(MessageService);
