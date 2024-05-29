@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../shared/data-access/auth.service';
@@ -33,4 +33,12 @@ export default class LoginComponent {
   public loginService = inject(LoginService);
   public authService = inject(AuthService);
   private router = inject(Router);
+
+  constructor() {
+    effect(() => {
+      if (this.authService.user()) {
+        this.router.navigate(['home']);
+      }
+    });
+  }
 }
