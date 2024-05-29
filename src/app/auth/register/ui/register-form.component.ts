@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Credentials } from '../../../shared/interfaces/credentials';
 import { RegisterStatus } from '../data-access/register.service';
+import { passwordMatchesValidator } from '../utils/password-matches';
 
 @Component({
   standalone: true,
@@ -22,6 +23,11 @@ import { RegisterStatus } from '../data-access/register.service';
           placeholder="email"
         />
         <mat-icon matPrefix>email</mat-icon>
+
+        @if( (registerForm.controls.email.dirty || form.submitted) &&
+        !registerForm.controls.email.valid ) {
+        <mat-error>Please provide a valid email</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field>
@@ -34,6 +40,11 @@ import { RegisterStatus } from '../data-access/register.service';
           placeholder="password"
         />
         <mat-icon matPrefix>lock</mat-icon>
+
+        @if( (registerForm.controls.password.dirty || form.submitted) &&
+        !registerForm.controls.password.valid ){
+        <mat-error>Password must be at least 8 characters long</mat-error>
+        }
       </mat-form-field>
 
       <mat-form-field>
@@ -45,7 +56,17 @@ import { RegisterStatus } from '../data-access/register.service';
           placeholder="confirm password"
         />
         <mat-icon matPrefix>lock</mat-icon>
+        @if( (registerForm.controls.confirmPassword.dirty || form.submitted) &&
+        registerForm.hasError('passwordMatch') ){
+        <mat-error>Must match password field</mat-error>
+        }
       </mat-form-field>
+
+      @if (status === 'error'){
+      <mat-error>Could not create account with those details.</mat-error>
+      } @else if(status === 'creating'){
+      <mat-spinner diameter="50"></mat-spinner>
+      }
 
       <button
         mat-raised-button
@@ -93,11 +114,17 @@ export class RegisterFormComponent {
 
   private fb = inject(FormBuilder);
 
-  registerForm = this.fb.nonNullable.group({
-    email: ['', [Validators.email, Validators.required]],
-    password: ['', Validators.minLength(8), Validators.required],
-    confirmPassword: ['', [Validators.required]],
-  });
+  registerForm = this.fb.nonNullable.group(
+    {
+      email: ['', [Validators.email, Validators.required]],
+      password: ['', [Validators.minLength(8), Validators.required]],
+      confirmPassword: ['', [Validators.required]],
+    },
+    {
+      updateOn: 'blur',
+      validators: [passwordMatchesValidator],
+    }
+  );
 
   onSubmit() {
     if (this.registerForm.valid) {

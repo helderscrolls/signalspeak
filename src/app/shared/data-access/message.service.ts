@@ -15,6 +15,7 @@ import {
 } from 'rxjs';
 import { FIRESTORE } from '../../app.config';
 import { Message } from '../interfaces/message';
+import { AuthService } from './auth.service';
 
 interface MessageState {
   messages: Message[];
@@ -26,6 +27,7 @@ interface MessageState {
 })
 export class MessageService {
   private firestore = inject(FIRESTORE);
+  private authService = inject(AuthService);
 
   // sources
   messages$ = this.getMessages();
@@ -68,8 +70,8 @@ export class MessageService {
   }
 
   private addMessage(message: string) {
-    const newMessage: Message = {
-      author: 'me@test.com',
+    const newMessage = {
+      author: this.authService.user()?.email,
       content: message,
       created: Date.now().toString(),
     };
