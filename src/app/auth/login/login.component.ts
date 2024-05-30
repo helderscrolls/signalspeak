@@ -10,12 +10,15 @@ import { LoginFormComponent } from './ui/login-form.component';
   selector: 'ss-login',
   template: `
     <div class="container gradient-bg">
+      @if(authService.user() === null){
       <ss-login-form
         [loginStatus]="loginService.status()"
         (login)="loginService.login$.next($event)"
       />
-
       <a routerLink="/auth/register">Create account</a>
+      } @else {
+      <mat-spinner diameter="50" />
+      }
     </div>
   `,
   providers: [LoginService],

@@ -18,8 +18,10 @@ import { MessageListComponent } from './ui/message-list.component';
           <mat-icon>logout</mat-icon>
         </button>
       </mat-toolbar>
-
-      <ss-message-list [messages]="messageService.messages()" />
+      <ss-message-list
+        [messages]="messageService.messages()"
+        [activeUser]="authService.user()"
+      />
       <ss-message-input (send)="messageService.add$.next($event)" />
     </div>
   `,
@@ -29,6 +31,30 @@ import { MessageListComponent } from './ui/message-list.component';
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
+  ],
+  styles: [
+    `
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+      }
+
+      mat-toolbar {
+        box-shadow: 0px -7px 11px 0px var(--accent-color);
+      }
+
+      ss-message-list {
+        height: 100%;
+        width: 100%;
+      }
+
+      ss-message-input {
+        position: fixed;
+        bottom: 0;
+      }
+    `,
   ],
 })
 export default class HomeComponent {
